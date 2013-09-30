@@ -19,8 +19,8 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
-
+\documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage[margin=1.6in]{geometry}
 \usepackage[protrusion=true,expansion=true]{microtype} % Better typography
 \usepackage{graphicx} % Required for including pictures
 \usepackage{wrapfig} % Allows in-line images
@@ -37,11 +37,9 @@
 \begin{flushright} % Right align
 {\LARGE\@title} % Increase the font size of the title
 
-\vspace{10pt} % Some vertical space between the title and author name
+\vspace{5pt} % Some vertical space between the title and author name
 
 {\large\@author} % Author name
-\\\@date % Date
-
 \vspace{0pt} % Some vertical space between the author block and abstract
 \end{flushright}
 }
@@ -103,22 +101,24 @@ Dealing with moving obstacles may create inadmissible islands to retimings below
 
 \section{Motivation}
 
+A common theme among all of the common motion planning tasks for a robot arm is that the arm is manipulating objects in static environments. The manipulation of static objects is well researched and multiple approaches have been presented in the last decade  that are fast and proven to be reliable. However, autonomous manipulation amidst dynamic environments poses new challenges to motion planning. Sampling-based planners do well in kinodynamic spaces~\cite{lavalle2001randomized}, but search-based planners are intrinsically hamstringed by the high dimensional search-spaces. This project seeks to use Bobrow's algorithm as a means of dimensionality reduction, to enable tractable search-based kinodynamic motion planning.
+
 %------------------------------------------------
 
 \section{Deliverables}
 
-\begin{tabular}{|p{0.1\textwidth}|p{0.80\textwidth}|p{0.10\textwidth}|}
+\begin{tabular}{|p{0.1\columnwidth}|p{0.80\columnwidth}|p{0.10\columnwidth}|}
 \hline
 \textbf{Progress} & \textbf{Deliverables} & \textbf{When}\\
 \hline
 50\% & 
-\begin{minipage}{0.80\textwidth}
+\begin{minipage}{0.80\columnwidth}
 \vskip 4pt
-\begin{enumerate}
+\begin{itemize}
 \item Implement and test numerically robust Bobrow's Algorithm.
 \item Visualize collision regions in the Phase-plane with moving obstacles.
 \item Develop augmented $\mathbb{C}$-space planner with velocity interval propogation.
-\end{enumerate}
+\end{itemize}
 \vskip 4pt
 \end{minipage} &
 Oct-30
@@ -127,20 +127,20 @@ Oct-30
 75\% & Develop and implement a scheme mentioned in Section~\ref{subsec:movobs}.&Nov-14\\
 \hline
 100\% & 
-\begin{minipage}{0.80\textwidth}
+\begin{minipage}{0.80\columnwidth}
 \vskip 4pt
-\begin{enumerate}
+\begin{itemize}
 \item Develop naive approach using \emph{VIP} and simple collision checking.
 \item Create test scenarios.
 \item Compare naive approach with approach from Section~\ref{subsec:movobs}.
 \item Analysis of planner variants.
-\end{enumerate}
+\end{itemize}
 \vskip 4pt
 \end{minipage}&
 Nov-28
 \\
 \hline
-125\% &Try other approaches enumerated in Section~\ref{subsec:movobs}.&Time permitting
+125\% &Try other approaches itemized in Section~\ref{subsec:movobs}.&Stretch
 \\
 \hline
 \end{tabular}
