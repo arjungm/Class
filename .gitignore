@@ -11,3 +11,13 @@
 *.lai
 *.la
 *.a
+
+# latex
+*.aux
+*.log
+*.bbl
+*.blg
+
+#editor
+*.asv~
+*.swp
