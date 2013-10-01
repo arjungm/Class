@@ -88,7 +88,7 @@ This project is to design a motion planner that accounts for kinodynamic constra
 Since planning in the kinematic configuration-space, $\mathbb{C}$, and consequently retiming the trajectory for dynamics is not a complete approach, the project will leverage previous work that allows us to efficiently assess whether a given path in $\mathbb{C}$ can be traversed with respect to the kinodynamic constraints~\cite{pham2013velocity}. By propogating the velocity intervals (the set of valid velocities) for a given waypoint in $\mathbb{C}$, the proposed planner is able to ensure that a valid retiming exists for a plan, that respects the kinodynamic constraints.
 
 \subsection{Moving Obstacles}\label{subsec:movobs}
-Dealing with moving obstacles may create inadmissible islands to retimings below the maximum-velocity curve of Bobrow's algorithm~\cite{shin1985minimum}. Literature survey currently does not turn up any method to path around these regions in the phase-plane, so the possible approaches the project will explore are:
+Dealing with moving obstacles may create inadmissible islands to retimings below the maximum-velocity curve of Bobrow's algorithm~\cite{shin1985minimum}. Literature survey currently does not turn up any method to produce a path around these regions in the phase-plane, so the possible approaches the project will explore are:
 
 \begin{itemize}
 \item Graph-based search in the phase-plane using the velocity field over the phase plane as defining the motion primitives.

@@ -35,8 +35,10 @@
 \newcommand{\condp}[2]{\Pr\left( #1 \pipe #2 \right)}
 \newcommand{\pr}[1]{\Pr\left( #1 \right)}
 \newcommand{\condpe}[2]{\frac{\pr{#1,#2}}{\pr{#2}}}
+\newcommand{\condpb}[2]{\frac{\condp{#2}{#1}\pr{#1}}{\pr{#2}}}
 \newcommand{\norm}[1]{\left|#1\right|}
-
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 %theorem styling
 \declaretheorem{theorem} 
 \declaretheoremstyle[%
@@ -141,7 +143,7 @@ The statement about the probability of $A2$ handling a transaction successfully 
 &\geq \frac{\pr{A2_{success}=1}+\pr{A1_{success}=1}-1}{\pr{A1_{success}=1}}\\
 &= \frac{\frac{2150}{2150+500}+\frac{6000}{6000+1700}-1}{\frac{6000}{6000+1700}}\\
 &= 0.757 \\
-&\not\leq 0.70 \qedhere
+\condp{A2_{success}=1}{A1_{success}=1} &\geq 0.757 \qedhere
 }
 
 \subsection{Monty Hall Problem}
@@ -173,7 +175,80 @@ which gives us,
 \newpage
 \section{Regression [Leila]}
 \subsection{Linear Regression}
+Starting with the definition of the MLE estimate,
+
+\begin{align*}
+\beta_{MLE} &= \argmax_{\beta \in B} \condp{Data}{\beta}\\
+&= \argmax_{\beta \in B} \prod_{i=1}^n \condp{y_i}{x_i, \beta}\\
+&= \argmax_{\beta \in B} \prod_{i=1}^n \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) \exp\left( \frac{-1}{2\sigma^2} (y_i-\beta x_i)^2 \right) \\
+&= \argmax_{\beta \in B} \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n \exp\left( \frac{-1}{2\sigma^2} \sum_{i=1}^n (y_i-\beta x_i)^2 \right) \\
+&= \argmax_{\beta \in B} \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n \exp\left( \frac{-1}{2\sigma^2} (Y-X\beta)^T(Y-X\beta) \right) \\
+\end{align*}
+
+The expressions above is maximized when $(Y-X\beta)^T(Y-X\beta)$ is minimized where,
+
+\begin{align*}
+Y &= \left[ \begin{array}{c}
+y_1 \\
+\vdots \\
+y_n \end{array} \right] \\
+X &= \left[ \begin{array}{c}
+x_1^T \\
+\vdots \\
+x_n^T \end{array} \right]
+\end{align*}
+
+Minimizing $L=(Y-X\beta)^T(Y-X\beta)$ by taking the gradient with respect to $\beta$, setting to zero, and solving for $\beta$ gives us the $\beta_{MLE}$ as follows,
+
+\prove{
+L &= (Y-X\beta)^T(Y-X\beta) \\
+L &= Y^TY -2Y^TX\beta+\beta^TX^TX\beta \\
+\nabla_{\beta}L &= 0 - 2Y^TX + (X^TX +(X^TX)^T)\beta \\
+0 &= -2Y^TX+2X^TX\beta \\
+X^TX\beta &= X^TY \\
+\beta_{MLE} &= (X^TX)^{-1}X^TY\qedhere
+}
+
 \subsection{Ridge Regression}
+
+Starting with the definition of the MAP estimate,
+
+\begin{align*}
+\beta_{MAP} &= \argmax_{\beta \in B} \condp{\beta}{Data}\\
+&= \argmax_{\beta \in B} \condpb{\beta}{Data}\\
+&\propto \argmax_{\beta \in B} \condp{Data}{\beta}\pr{\beta}\\
+&\propto \argmax_{\beta \in B} \left[ \prod_{i=1}^n \condp{y_i}{x_i, \beta}\right] \pr{\beta}\\
+&\propto \argmax_{\beta \in B} \left[ \prod_{i=1}^n \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) \exp\left( \frac{-1}{2\sigma^2} (y_i-\beta x_i)^2 \right) \right] \exp\left(\frac{-\beta^T\beta}{2\lambda^2}\right)\\
+&\propto \argmax_{\beta \in B} \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n \exp\left( \frac{-1}{2\sigma^2} \sum_{i=1}^n (y_i-\beta x_i)^2 \right) \right] \exp\left(\frac{-\beta^T\beta}{2\lambda^2}\right)\\
+&\propto \argmax_{\beta \in B} \left[ \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n \exp\left( \frac{-1}{2\sigma^2} (Y-X\beta)^T(Y-X\beta) \right) \right] \exp\left(\frac{-\beta^T\beta}{2\lambda^2}\right)\\
+&\propto \argmax_{\beta \in B} \left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)^n \exp\left( \frac{-1}{2\sigma^2} (Y-X\beta)^T(Y-X\beta) + \frac{-\beta^T\beta}{2\lambda^2}\right)\\
+\end{align*}
+
+The expressions above is maximized when $\frac{-1}{2\sigma^2}(Y-X\beta)^T(Y-X\beta)-\frac{\beta^T\beta}{2\lambda^2}$ is minimized where,
+
+\begin{align*}
+Y &= \left[ \begin{array}{c}
+y_1 \\
+\vdots \\
+y_n \end{array} \right] \\
+X &= \left[ \begin{array}{c}
+x_1^T \\
+\vdots \\
+x_n^T \end{array} \right]
+\end{align*}
+
+Since $\sigma=1$, we can also get rid of the 2's and minimize $L=(Y-X\beta)^T(Y-X\beta)-\frac{\beta^T\beta}{\lambda^2}$ by taking the gradient with respect to $\beta$, setting to zero, and solving for $\beta$ gives us the $\beta_{MAP}$ as follows,
+
+\prove{
+L &= (Y-X\beta)^T(Y-X\beta)-\frac{\beta^T\beta}{\lambda^2}\\
+L &= Y^TY -2Y^TX\beta+\beta^TX^TX\beta-\lambda^\prime\beta^T\beta \\
+\nabla_{\beta}L &= 0 - 2Y^TX + (X^TX +(X^TX)^T)\beta -2\lambda^\prime\beta \\
+0 &= -2Y^TX+2X^TX\beta-2\lambda^\prime\beta \\
+(X^TX+\lambda^\prime)\beta &= X^TY \\
+\beta_{MAP} &= (X^TX+\lambda^\prime)^{-1}X^TY\qedhere
+}
+
+
 \newpage
 \section{Classification [Dougal]}
 \subsection{Drawing decision boundaries}
