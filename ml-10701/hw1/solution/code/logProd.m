@@ -1,6 +1,6 @@
 function [ xProd ] = logProd( X )
 
-xProd = 0;
+xProd = sum(X);
 
 end
 
