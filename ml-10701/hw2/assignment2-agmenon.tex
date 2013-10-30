@@ -1,0 +1,232 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage{geometry}
+\geometry{paperwidth=4in,margin=.1in,paperheight=30in}
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{wrapfig} % Allows in-line images
+\usepackage{amsmath,amsthm}
+\usepackage{thmtools}
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\newcommand{\pipe}{\;\middle\vert\;}
+\newcommand{\condp}[2]{\Pr\left( #1 \pipe #2 \right)}
+\newcommand{\pr}[1]{\Pr\left( #1 \right)}
+\newcommand{\condpe}[2]{\frac{\pr{#1,#2}}{\pr{#2}}}
+\newcommand{\condpb}[2]{\frac{\condp{#2}{#1}\pr{#1}}{\pr{#2}}}
+\newcommand{\norm}[1]{\left|#1\right|}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+%theorem styling
+\declaretheorem{theorem} 
+\declaretheoremstyle[%
+spaceabove=-6pt,%
+spacebelow=6pt,%
+headfont=\normalfont\itshape,%
+postheadspace=1em,%
+qed=\qedsymbol,%
+headpunct={}
+]{mystyle} 
+\declaretheorem[name={},style=mystyle,unnumbered,
+]{Proof}
+
+\newcommand{\prove}[1]{
+\begin{Proof}
+\begin{align*}
+#1
+\end{align*}
+\end{Proof}
+}
+
+\newcommand{\lm}{\lambda}
+\newcommand{\LML}[2]{\lm #1 + (1-\lm) #2}
+
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+{\large\@author} % Author name
+\\\@date % Date
+
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Assignment 2}\\ % Title
+Machine Learning 10-701} % Subtitle
+
+\author{\textsc{Arjun Menon} % Author
+\\{\textit{Carnegie Mellon University}}} % Institution
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+\section{Convexity}
+\subsection{}
+\subsubsection*{(a)}
+\begin{align*}
+&h_1(x) = f(Ax+b)\\
+\end{align*}
+For convexity,
+\begin{align*}
+&\lm f(Ax+b) + (1-\lm)f(Ay+b) \geq f(A(\lm x + (1-\lm)y) +b)\\
+\end{align*}
+Let $\alpha = Ax+b$ and $\beta = Ay+b$,
+\begin{align*}
+\lm f(\alpha) + (1-\lm) f(\beta) \geq f(\lm(\alpha) + (1-\lm)\beta)\\
+\end{align*}
+Which is true.
+
+\subsubsection*{(b)}
+\begin{align*}
+h_2(\LML{x}{y}) \leq \lm h_2(x) + (1-\lm)h_2(y) \\
+\end{align*}
+Decomposes to two inequalities,
+\begin{align*}
+f(\LML{x}{y}) \leq h_2(x) + (1-\lm)h_2(y)\\
+\end{align*}
+and\\
+\begin{align*}
+g(\LML{x}{y}) \leq \lm h_2(x) + (1-\lm)h_2(y)\\
+\end{align*}
+If $f$ is strictly greater than $g$ everywhere, then $h_2(x)$ is trivially convex. However at the end points $x$ and $y$, if $g$ is greater then it follows that for one of these cases that,\\
+\begin{align*}
+f(\LML{x}{y}) &\leq \LML{f(x)}{f(y)}\\
+          &\leq \LML{g(x)}{f(y)}\\
+          &\leq \lm h_2(x) + (1-\lm)h_2(y) \\
+\end{align*}
+Which shows convexity of $h_2$ holds, if you permute for f or g being greater at either end points since lines are convex functions.
+
+\subsubsection*{(c)}
+\begin{align*}
+\LML{h_3(x)}{h_3(y)} &\geq h_3(\LML{x}{y})\\
+&\geq g*f(\LML{x}{y})\\
+\LML{g*f(x)}{g*f(y)} &\geq g*f(\LML{x}{y})\\
+\end{align*}
+Substituting $f(x)=\alpha$ and $g(x)=\beta$,
+\begin{align*}
+\LML{g(\alpha)}{g(\beta)} \geq g(\LML{\alpha}{\beta})\\
+\end{align*}
+Which is true.
+\subsection{}
+
+\begin{align*}
+f(x+\lm(y-x))-f(x) &\leq \lm(f(y)-f(x))\\
+(y-x)\lim_{\lm\to 0} \frac{f(x+\lm(y-x))-f(x)}{\lm(y-x)} &\leq f(y) - f(x)\\
+(y-x)f'(x) &\leq f(y) - f(x)\\
+\end{align*}
+
+\subsection{}
+\subsubsection*{(a)}
+If,
+\begin{align*}
+f(\LML{x}{y} &\leq \LML{f(x)}{f(y)} - \frac{1}{2} n \lm (1 - \lm) \left|x-y\right|^2_2\\
+&\leq \LML{f(x)}{f(y)} - \frac{1}{2} m \lm (1 - \lm) \left|x-y\right|^2_2\\
+\end{align*}
+
+Then,
+\begin{align*}
+- \frac{1}{2} n \lm (1 - \lm) \left|x-y\right|^2_2 \leq - \frac{1}{2} m \lm (1 - \lm) \left|x-y\right|^2_2\\
+\end{align*}
+
+can only be true for $m > n$, for $\lm \in (0,1)$ and $x,y \in$ the domain of $f$
+
+\subsubsection*{(b)}
+Given,
+\begin{align*}
+f(\LML{x}{y}) \leq \LML{f(x)}{f(y)} - \frac{1}{2} m \lm (1 - \lm) \left|x-y\right|^2_2\\
+\end{align*}
+Then for strict convexity, we want that,
+\begin{align*}
+\frac{1}{2} m \lm (1 - \lm) \left|x-y\right|^2_2 > 0
+\end{align*}
+Which is guaranteed by the following constituent terms being nonzero, when $\lm \in (0,1)$ and $x\ne y$:
+\begin{itemize}
+\item $m\ne0$, for strong convexity
+\item $\lm\ne 0$, condition for strict
+\item $\lm\ne 1$, condition for strict
+\item $\left|x-y\right|^2_2 \ne 0$, condition for strict
+\end{itemize}
+
+Thus strong convexity implies strict convexity.
+\subsubsection*{(c)}
+\begin{align*}
+f(x) = x^4\\
+f'(x) = 4x^3\\
+f''(x) = 12x^2\\
+\end{align*}
+
+The second order differential shows that $f''(x) > 0$ for all $x \in  (0,\infty]$ which gives us our strict convexity domain.
+
+Note however that there is no $m$ for $12x^2 \geq m$, because for any $m$ you can get a lower $x$ that violates this bound on the domain.
+\subsection{}
+\subsubsection*{(a)}
+\begin{align*}
+f(x) = x^2 + x^4
+f'(x) = 2x + 4x^3
+f''(x) = 2 + 12x^2 > 0
+\end{align*}
+
+for all $x \in [-\infty,\infty]$ which makes it strongly convex for $x=2$.
+
+\subsubsection*{(b)}
+\begin{align*}
+f(x) = x^2 + x^4
+f'(x) = 2x + 4x^3
+f''(x) = 2 + 12x^2 \geq 2 + 12 1^2 = 14
+\end{align*}
+Which proves it is strongly convex for $m=14$.
+
+\subsubsection*{(c)}
+Given,
+\begin{align*}
+x,y \in \mathbb{R}^d, \lm \in (0,1)
+\end{align*}
+We have by triangle inequality of the norms, and linearity,
+\begin{align*}
+\left| \LML{x}{y}\right|^2 &\leq \left|\lm x\right| + \left|(1-\lm)y\right|
+&= \lm\left| x\right| + (1-\lm)\left|y\right|
+\end{align*}
+
+Which is convex, but not strictly convex if you just take the example where $y = a x$.
+
+%------------------------------------------------
+%\bibliographystyle{unsrt}
+%\bibliography{sample}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

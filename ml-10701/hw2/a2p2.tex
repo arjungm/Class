@@ -1,0 +1,178 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage{geometry}
+\geometry{paperwidth=4in,margin=.1in,paperheight=20in}
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{wrapfig} % Allows in-line images
+\usepackage{amsmath,amsthm}
+\usepackage{thmtools}
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\newcommand{\pipe}{\;\middle\vert\;}
+\newcommand{\condp}[2]{\Pr\left( #1 \pipe #2 \right)}
+\newcommand{\pr}[1]{\Pr\left( #1 \right)}
+\newcommand{\condpe}[2]{\frac{\pr{#1,#2}}{\pr{#2}}}
+\newcommand{\condpb}[2]{\frac{\condp{#2}{#1}\pr{#1}}{\pr{#2}}}
+\newcommand{\norm}[1]{\left|#1\right|}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+%theorem styling
+\declaretheorem{theorem} 
+\declaretheoremstyle[%
+spaceabove=-6pt,%
+spacebelow=6pt,%
+headfont=\normalfont\itshape,%
+postheadspace=1em,%
+qed=\qedsymbol,%
+headpunct={}
+]{mystyle} 
+\declaretheorem[name={},style=mystyle,unnumbered,
+]{Proof}
+
+\newcommand{\prove}[1]{
+\begin{Proof}
+\begin{align*}
+#1
+\end{align*}
+\end{Proof}
+}
+
+\newcommand{\lm}{\lambda}
+\newcommand{\LML}[2]{\lm #1 + (1-\lm) #2}
+\newcommand{\difrac}[2]{\frac{\delta #1}{\delta #2}}
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+{\large\@author} % Author name
+\\\@date % Date
+
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Assignment 2}\\ % Title
+Machine Learning 10-701} % Subtitle
+
+\author{\textsc{Arjun Menon} % Author
+\\{\textit{Carnegie Mellon University}}} % Institution
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+\section{Linear Regression}
+\subsection{2.1}
+\subsubsection*{(a)}
+\begin{align*}
+J_{\lm}(\beta) &= \tfrac{1}{2} \norm{y-X\beta}^2 +\lm\beta\\
+&= \tfrac{1}{2}y^Ty-\beta^T X^T y+\tfrac{1}{2}\beta^T\beta +\lm\sum_i{\norm{\beta_i}}\\
+&= \tfrac{1}{2}y^Ty +\sum_i{\lm\norm{\beta_i}+\frac{\beta_i^2}{2}-\beta_i X_i^T y}\\
+\end{align*}
+
+By virtue of the summations and the single summation over $i$ you will see that for the optimum for $\beta_i$,
+
+\begin{align*}
+\difrac{J_{\lm}(\beta)}{\beta_i} = sign(\beta_i)\lm + \beta_i - X_i^T y
+\end{align*}
+
+depends only on the $i$th row data.
+
+\subsubsection*{(b)}
+\begin{align*}
+\beta^{*}_j = X_i^Ty-\lm > 0
+\end{align*}
+\subsubsection*{(c)}
+\begin{align*}
+\beta^{*}_j = X_i^Ty+\lm < 0
+\end{align*}
+\subsubsection*{(d)}
+\begin{align*}
+&\beta^{*}_i &= X_i^Ty+\lm > 0\\
+\implies&\beta^{*}_i &= X_i^Ty > -\lm\\
+&\beta^{*}_i &= X_i^Ty-\lm < 0\\
+\implies&\beta^{*}_i &= X_i^Ty < \lm\\
+\end{align*}
+This shows that the band of $(-\lm,\lm)$ is a region where the contribution of a data point to $\beta$ is null.
+\subsubsection*{(e)}
+\begin{align*}
+&\difrac{J_{\lm}(\beta)}{\beta_i} = \beta_i(1+\lm) - X_i^T y = 0\\
+\implies&\beta_i = \frac{X_i^Ty}{1+\lm}
+\end{align*}
+
+Here you see that this is only zero when $X_i^Ty$ which is not likely to occur.
+\subsection{2.2}
+\subsubsection*{(a)}
+Starting with,
+\begin{align*}
+\beta =(X^TX+\lm I)^{-1}X^Ty\\
+\end{align*}
+and the identity,
+\begin{align*}
+(X^TX+\lm I)X^T &= X^TXX^T+\lm X^T \\
+                &= X^T(XX^T+\lm I)\\
+(X^TX+\lm I)^{-1}(X^TX+\lm I)X^T &= (X^TX+\lm I)^{-1}X^T(XX^T+\lm I)\\
+X^T(X^TX+\lm I)^{-1}y &= (X^TX+\lm I)^{-1}X^Ty\\
+\end{align*}
+You get,
+\begin{align*}
+\beta &= X^T(X^TX+\lm I)^{-1}y\\
+\beta &= X^T\alpha y\\
+\end{align*}
+
+Which shows $\beta$ is in the row space of $X$. 
+\subsubsection*{(b)}
+See above for the derivation of $\alpha$.
+\subsubsection*{(c)}
+\begin{align*}
+y_{p} &= \langle \beta, x \rangle\\
+  &=\langle y_{t}^T(XX^T+\lm I)^{-1}X, x \rangle\\
+  &=y_{t}^T(\langle X,X \rangle+\lm I)^{-1}\langle X, x \rangle\\
+  &=y_{t}^T(K+\lm I)^{-1}\kappa
+\end{align*}
+
+Bazinga only inner products.
+\subsubsection*{(d)}
+For non-kernalized, it is the number of features.
+
+For kernalized, it is the number of observations and observations $\times$ features.
+%------------------------------------------------
+%\bibliographystyle{unsrt}
+%\bibliography{sample}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
