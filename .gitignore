@@ -21,3 +21,6 @@
 #editor
 *.asv~
 *.swp
+
+*.pdf
+*.toc

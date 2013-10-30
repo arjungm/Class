@@ -1,0 +1,113 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage[margin=1.6in]{geometry}
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{wrapfig} % Allows in-line images
+
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbf{#1.}} % Change the square brackets for each bibliography item from '[1]' to '1.'
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+\vspace{5pt} % Some vertical space between the title and author name
+
+{\large\@author} % Author name
+\vspace{0pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Manipulation Algorithms Midterm Project Report}\\ % Title
+Trajectory Retiming for Manipulation Planning} % Subtitle
+
+\author{\textsc{Arjun Menon} % Author
+\\{\textit{Carnegie Mellon University}}} % Institution
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT AND KEYWORDS
+%----------------------------------------------------------------------------------------
+
+%\renewcommand{\abstractname}{Summary} % Uncomment to change the name of the abstract to something else
+
+%\begin{abstract}
+%
+%\end{abstract}
+%
+%\hspace*{3,6mm}\textit{Keywords:} lorem , ipsum , dolor , sit amet , lectus % Keywords
+%
+%\vspace{10pt} % Some vertical space between the abstract and first section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\section{Problem}
+
+This project is to design a motion planner that accounts for kinodynamic constraints and moving obstacles. The project aims to circumvent the curse of dimensionality in the kinodynamic configuration-space, $\mathbb{C}_d$, for search-based planners through adaptation of Bobrow's trajectory retiming algorithm~\cite{bobrow1985time}.
+
+\section{Proposed Planner}\label{sec:approach}
+
+\subsection{Trajectory Retiming}\label{sec:constraints}
+
+In this project, I am exploring the approach used in "Kinodynamic Planning 
+
+Since planning in the kinematic configuration-space, $\mathbb{C}$, and consequently retiming the trajectory for dynamics is not a complete approach, the project will leverage previous work that allows us to efficiently assess whether a given path in $\mathbb{C}$ can be traversed with respect to the kinodynamic constraints~\cite{pham2013velocity}. By propogating the velocity intervals (the set of valid velocities) for a given waypoint in $\mathbb{C}$, the proposed planner is able to ensure that a valid retiming exists for a plan, that respects the kinodynamic constraints.
+
+\subsection{Moving Obstacles}\label{subsec:movobs}
+
+Dealing with moving obstacles may create inadmissible islands to retimings below the maximum-velocity curve of Bobrow's algorithm~\cite{shin1985minimum}. This isn't exactly accurate, and in order to represent moving obstacles in the framework for the retiming algorithm, a third dimension is added to the phase plane where the retiming is created. The third dimension is time, and it provides benefits to retiming in that the moving obstacle's representation can be simplified.
+
+Given a path, a moving obstacle that intersections this path, one can construct an infeasible region for the phase-plane curve to pass through. Through use of this 3d construct, the hope is to be able to decide on time-optimal motions which result in collisions with the object. Obstacles can be represented as intervals in $s$ and $t$.
+
+%------------------------------------------------
+
+%------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\bibliographystyle{unsrt}
+
+\bibliography{bibliography}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
