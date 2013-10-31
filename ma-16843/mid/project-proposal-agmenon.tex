@@ -19,8 +19,8 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
-\usepackage[margin=1.6in]{geometry}
+\documentclass[letterpaper,11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage[margin=1in]{geometry}
 \usepackage[protrusion=true,expansion=true]{microtype} % Better typography
 \usepackage{graphicx} % Required for including pictures
 \usepackage{caption}
@@ -69,13 +69,13 @@
 \begin{figure}[h!]
 \centering
 
-\begin{subfigure}[t!]{0.8\linewidth}
+\begin{subfigure}[t!]{0.9\linewidth}
 \includegraphics[width=\linewidth]{#1}
 \caption{}
 \label{fig:#4L}
 \end{subfigure}
 ~
-\begin{subfigure}[b!]{0.8\linewidth}
+\begin{subfigure}[b!]{0.9\linewidth}
 \includegraphics[width=\linewidth]{#2}
 \caption{}
 \label{fig:#4R}
@@ -85,6 +85,9 @@
 \label{fig:#4}
 \end{figure}
 }
+
+\newif\ifpfig
+\pfigtrue
 
 \newcommand{\reffig}[1]
 {
@@ -106,11 +109,11 @@ Figure~\ref{fig:#1}
 %	TITLE
 %----------------------------------------------------------------------------------------
 
-\title{\textbf{Manipulation Algorithms Midterm Project Report}\\ % Title
+\title{\textbf{Manipulation Algorithms Midterm Report}\\ % Title
 Trajectory Retiming for Manipulation Planning} % Subtitle
 
 \author{\textsc{Arjun Menon} % Author
-\\{\textit{Carnegie Mellon University}}} % Institution
+} % Institution
 
 %----------------------------------------------------------------------------------------
 
@@ -142,39 +145,21 @@ In this project, the approach used in "Kinodynamic Planning in the Configuration
 
 In the following sections, the major implementation components for the project is described starting with Bobrow's Algorithm, the Dynamic Obstacle Representation, and Prototypical Successor Generation trials.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\textwidth]{pics/dynamic_singularity_pose}
-\caption{Manipulator's $\mathbb{C}$-space path alongside the configuration of the end-effector at which there is unclear path-acceleration}
-\label{fig:dynamic_singularity}
-\end{figure}
+\ifpfig
+\ffig{pics/dynamic_singularity_pose}{Manipulator's $\mathbb{C}$-space path alongside the configuration of the end-effector at which there is unclear path-acceleration}{dynamic_singularity}
+\fi
 
 \subsection{Bobrow's Algorithm}\label{subsec:bobrow}
 
 The implementation of this is the first milestone in the project. Starting with a 2-link manipulator and the dynamics model of the arm, initial attempts at constructing retimings like in the original paper were met with difficulties due to "dynamic singularities".
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\textwidth]{pics/box_constraint_mvc}
-\caption{Maximum Velocity curve in the $s$-$\dot{s}$ plane, with the $\beta$ and $\alpha$ acceleration profiles from start and end configurations.}
-\label{fig:box_mvc}
-\end{figure}
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.8\textwidth]{pics/box_constraints_at_switch}
-\caption{Constraints on $\dot{s}$ and $\ddot{s}$ at the irregular switch point. The exaggerated scale of the $\ddot{s}$ means a practically unbounded range of path accelerations can be chosen at the point of maximum path velocity $\dot{s}_{max}$}
-\label{fig:box_constraints}
-\end{figure} 
+\ifpfig
+\ffig{pics/box_constraint_mvc}{Maximum Velocity curve in the $s$-$\dot{s}$ plane, with the $\beta$ and $\alpha$ acceleration profiles from start and end configurations.}{box_mvc}
+\ffig{pics/bobrow_path}{Demonstration of successful trajectory retiming curve constructed using elliptical torque contraints.}{elliptical}
+\ffig{pics/box_constraints_at_switch}{Constraints on $\dot{s}$ and $\ddot{s}$ at the irregular switch point. The exaggerated scale of the $\ddot{s}$ means a practically unbounded range of path accelerations can be chosen at the point of maximum path velocity $\dot{s}_{max}$}{box_constraints}
+\fi
 
 An example of this crops up at the manipulator configuration in the path described in Figure~\ref{fig:dynamic_singularity}. The retiming curve for this $\mathbb{C}$-space path is partially constructed in Figure~\ref{fig:box_mvc} with a switch-point that has ambiguous path acceleration limits. Figure~\ref{fig:box_constraints} shows the constraints on $\dot{s}$ and $\ddot{s}$ at the problematic point, which shows that at maximum path velocity, $\dot{s}_{max}$, there is an unbounded range of feasible path accelerations, $\ddot{s}$. This makes constructing the switching curve at this point ill-posed, since it runs counter to the expectation that at maximum path velocity there is a single feasible path acceleration at every other position along the path.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.8\textwidth]{pics/bobrow_path}
-\caption{Demonstration of successful trajectory retiming curve constructed using elliptical torque contraints.}
-\label{fig:elliptical}
-\end{figure}
 
 The problem can be circumvented with the insight that the problem arises due to box constraints on the torque. Using elliptical constraints~\cite{shiller1992computation}, the trajectory retiming curve can be constructed in the absence of such "singular" points. The results of this for the same manipulator path shown above are demonstrated in Figure~\ref{fig:elliptical}.
 
@@ -184,12 +169,15 @@ With the implementation of the basic retiming curve being constructed, it is now
 
 Dealing with moving obstacles may create inadmissible islands to retimings below the maximum-velocity curve of Bobrow's algorithm~\cite{shin1985minimum}. This isn't exactly accurate, and in order to represent moving obstacles in the framework for the retiming algorithm, a third dimension is added to the phase plane where the retiming is created. The third dimension is time, and it provides benefits to retiming in that the moving obstacle's representation can be simplified.
 
+This is demonstrated in \reffig{rep3da} and \reffig{rep3db}. The time dimension for the retiming curve shows how it intersects the course of the dynamic obstacle region.
+
+\ifpfig
 \ffigdouble{pics/representation3d1}{pics/representation3d2}{Two viewpoints of the retiming curve constructed in the $s$-$\dot{s}$ plane and then rendered in the $t$-dimension, which shows how it intersects with the region rendered inadmissible by collision checking}{rep3da}
 
-\ffigdouble{pics/representation3d3}{pics/representation3d4}{Representation of moving obstacle to the path of the end effector from the: (a) $s$-$t$ plane viewpoint, and (b) $s$-$\dot{s}$ viewpoint}{rep3db}
+\ffigdouble{pics/representation3d3}{pics/representation3d4}{Representation of moving obstacle to the path of the end effector from the: (a) $s$-$t$ plane viewpoint where the dark-red region is the region of collision, and (b) $s$-$\dot{s}$ viewpoint where the green region ambiguously represents the collision region of the dynamic obstacle}{rep3db}
+\fi
 
-Given a path, a moving obstacle that intersections this path, one can construct an infeasible region for the phase-plane curve to pass through. Through use of this 3d construct, the hope is to be able to decide on time-optimal motions which result in collisions with the object. Obstacles can be represented as intervals in $s$ and $t$.
-
+Given a path, a moving obstacle that intersects the manipulator path, one can construct an infeasible region for the phase-plane curve to pass through, which is can be compactly described as intervals in $s$ and $t$.
 
 \subsection{Prototypical Successor Generation}\label{subsec:succ}
 
@@ -197,13 +185,16 @@ In the framework of graph search, it is intractable to have already enumerated t
 
 Since our graph state is the robot configuration, the reachable velocity interval, and the range of entry times, the successor function needs to be designed to account for the dynamic obstacles using our representation.
 
-\ffigdoublevert{pics/planner/initial_exp1}{pics/planner/initial_exp2}{Successor reachable velocities and time interval generated for the start state, represented as the black line on the $s=1$ plane.}{iexp}
 
 The path chosen in Section~\ref{subsec:bobrow} was broken into three segments, with the knot points being our successor states. Running through this example, the expected output of the successor function from the initial configuration can be seen in \reffig{iexp}.
 
+\ifpfig
+\ffigdoublevert{pics/planner/initial_exp1}{pics/planner/initial_exp2}{Successor reachable velocities and time interval generated for the start state, represented as the black line on the $s=1$ plane.}{iexp}
+
 \ffigdoublevert{pics/planner/second_exp1}{pics/planner/second_exp2}{Possible retiming curves for the earliest and latest times for the \textbf{previous} state, represented as magenta and blue curves that start from the $s=0$ plane.}{sexpA}
 
-\ffigdoublevert{pics/planner/second_exp4}{pics/planner/second_exp5}{Possible retiming curves for the earliest and latest times for the \textbf{previous} state, represented as magenta and blue curves that start from the $s=0$ plane.}{sexpB}
+\ffigdoublevert{pics/planner/second_exp4}{pics/planner/second_exp5}{Family of retiming curves that each start from a point on the $s=0$ plane decided by the preceding state.}{sexpB}
+\fi
 
 In the successor state to that, there is an interval of starting times and starting path velocities. The result of constructing retiming curves from the extremal starting times can be seen in \reffig{sexpA}. The curves intersect the inadmissable region by an imagined obstacle flying through the path of the manipulator.
 
@@ -213,7 +204,7 @@ The goal with generating these curves is they allow the manipulator to execute s
 
 However they introduce a new problem where there exist a family of retiming curves dependant on the starting $\dot{s}$ and time from $s=0$. It's not clear how to choose which curve to represent the shortest curve to meet the $s=1$ plane. It may even be the case that decelerating to $\dot{s}=0$. Further investigation of the relationship between the retiming curve and the dynamic obstacle is needed.
 
-The open questions remains for how to generate the successors in a manner that can ensure resolution completeness.
+Another open question that remains is how to generate the successors in a manner that can ensure resolution completeness, in this kinodynamic search space. Generating successors in $\mathbb{C}_{free}$ and then creating paths between two configurations means implicitly we are choosing one possible path from the family of $C_2$ continuous paths to perform our velocity and time interval propagation.
 
 %------------------------------------------------
 
