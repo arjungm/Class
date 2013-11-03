@@ -1,0 +1,269 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper,11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage[margin=1in]{geometry}
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{wrapfig} % Allows in-line images
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{appendix}
+
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbf{#1.}} % Change the square brackets for each bibliography item from '[1]' to '1.'
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\newcommand{\ffig}[3]{
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{#1}
+\caption{#2}
+\label{fig:#3}
+\end{figure}
+}
+
+\newcommand{\ffigdouble}[4]{
+\begin{figure}[h!]
+\centering
+
+\begin{subfigure}[l!]{0.48\linewidth}
+\includegraphics[width=\linewidth]{#1}
+\caption{}
+\label{fig:#4L}
+\end{subfigure}
+~
+\begin{subfigure}[r!]{0.48\linewidth}
+\includegraphics[width=\linewidth]{#2}
+\caption{}
+\label{fig:#4R}
+\end{subfigure}
+
+\caption{#3}
+\label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\ffigdoublevert}[4]{
+\begin{figure}[h!]
+\centering
+
+\begin{subfigure}[t!]{0.9\linewidth}
+\includegraphics[width=\linewidth]{#1}
+\caption{}
+\label{fig:#4L}
+\end{subfigure}
+~
+\begin{subfigure}[b!]{0.9\linewidth}
+\includegraphics[width=\linewidth]{#2}
+\caption{}
+\label{fig:#4R}
+\end{subfigure}
+
+\caption{#3}
+\label{fig:#4}
+\end{figure}
+}
+
+\newif\ifpfig
+\pfigtrue
+
+\newcommand{\reffig}[1]
+{
+Figure~\ref{fig:#1}
+}
+
+\renewcommand{\thesubsection}{\Roman{subsection}}
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+\vspace{5pt} % Some vertical space between the title and author name
+
+{\large\@author} % Author name
+\vspace{0pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Manipulation Algorithms Midterm Report}\\ % Title
+Trajectory Retiming for Manipulation Planning} % Subtitle
+
+\author{\textsc{Arjun Menon} % Author
+} % Institution
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT AND KEYWORDS
+%----------------------------------------------------------------------------------------
+
+%\renewcommand{\abstractname}{Summary} % Uncomment to change the name of the abstract to something else
+
+%\begin{abstract}
+%
+%\end{abstract}
+%
+%\hspace*{3,6mm}\textit{Keywords:} lorem , ipsum , dolor , sit amet , lectus % Keywords
+%
+%\vspace{10pt} % Some vertical space between the abstract and first section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\section*{Milstones Summary}\label{sec:proposed}
+
+\begin{tabular}{|p{0.05\textwidth}|p{0.7\textwidth}|p{0.08\textwidth}|p{0.05\textwidth}|}
+\hline
+\textbf{\#} & \textbf{Milestone} & \textbf{Due} & \textbf{}\\
+\hline
+
+\textbf{I} & Implement numerically robust Bobrow's Algorithm & Oct-30 & $\checkmark$ \\
+\hline
+
+\textbf{II} & Visualize collision regions in the Phase-plane for dynamic obstacles & Oct-30 & $\checkmark$ \\
+\hline
+
+\textbf{III} & Implement $\mathbb{C}$-space planner with velocity interval propogation & Oct-30 & \text{\sffamily X}\\
+\hline
+
+\textbf{IV} & Do one:
+\begin{minipage}{0.6\textwidth}
+\vskip 4pt
+\begin{itemize}
+\item Graph search in the discretized phase-plane
+\item Integrating the SIPP framework~\cite{phillips2011sipp} with Velocity Interval Propagation 
+\item Designing the switching point strategy for object collisions
+\end{itemize}
+\vskip 4pt
+\end{minipage}  & Nov-14 & 
+\begin{minipage}{0.01\textwidth}
+---\\
+\text{\sffamily X}\\
+\\
+\text{\sffamily X}\\
+\vskip 4pt
+\end{minipage}\\
+\hline
+
+\end{tabular}
+
+\subsection{Implementing Bobrow's Algorithm}
+
+Deriving the mass, coriolis and gravity matrices for an $N$-DOF manipulator by hand proved difficult via the Lagrangian. The Kinematics \& Dynamics Library (KDL) uses a numerical method for finding them, but this is unsuited for use in Bobrow's algorithm (due to volume of queries). I used the method detailed in the MLS robotics textbook~\cite{MLSdynamics}, doing away with symbolic math solvers, and that gave neat closed form expressions for the quantities I needed.
+
+In implementing trajectory retiming algorithm, I found ill-behaved integration at a "dynamically singular" switch point, at the configuration rendered in\reffig{DynSing} and marked by the triangle in the phase plane in \reffig{BoxMVC}. I opted to use elliptical torque constraints~\cite{shiller1992computation} and produced the switching curve shown in\reffig{elliptical}.
+
+\subsection{Visualizing Obstacles in the Phase-Plane}
+
+The observation that a switching point strategy for dynamic obstacles cannot be constructed using only the phase plane lead to adding the time dimensions. This proved useful in representing dynamic obstacles in the path of the end-effector, since in the simplest case they are box-region is $s$ (path parameter) and $t$ (time), which are demonstrated in\reffig{rep3da} and\reffig{rep3db}.
+
+\subsection{Implementing Velocity Interval Propagation with Graph-Search}\label{subsec:vip}
+
+The $\mathbb{C}$-space planner with trajectory retiming proposed is not probabilistically-complete due to the assumptions that are made about the interpolating path~\cite{pham2013velocity}. My claim that this could be redressed by implementing the VIP-framework using a graph-search based planner also does not hold. In generating a successor using only the kinematic $\mathbb{C}$-space, similar assumptions need to be made for getting the path over which time-scaling is performed. For this reason Milestone \textbf{III} in the table above is skipped. This means two sub-milestones in Milestone \textbf{IV} are not feasible.
+
+\subsection{SIPP Framework, VIP, and Ammendments}\label{subsec:ammend}
+
+In this milestone, I suggest integrating VIP with SIPP. However, outside of the shortcoming described in Milestone~\ref{subsec:vip}, the problem is not feasible since SIPP's assumptions are incompatible or not evidently reconcilable, as can be seen here:
+\begin{itemize}
+\item SIPP assumes that the robot may instantly decelerate and instantly accelerate to maximum speed, which is a reasonable for the PR2's \emph{base} but not for the PR2's manipulator. 
+\item Integrating "reachable" path velocities with SIPP's motion primitives of "Move Immediately" or "Wait-and-Move" actions make the state transitions hard to envision.
+\end{itemize} 
+In brief, for any path to a successor, I would have to solve the problem of finding \emph{and} picking between homotopic\footnote{with respect to dynamic obstacles} classes of trajectories time-parametrizations.
+
+Another hurdle to SIPP is computing the earliest time to reach a successor (which is a position state and its' safe interval). This is akin to solving a 2-point boundary value problem, which is intractable for manipulators.
+
+\section*{Rescoped Project Milestones and Objective}
+
+\begin{tabular}{|p{0.05\textwidth}|p{0.7\textwidth}|p{0.08\textwidth}|p{0.05\textwidth}|}
+\hline
+\textbf{\#} & \textbf{Milestone} & \textbf{Due} & \textbf{}\\
+\hline
+
+\textbf{I} & Implement numerically robust Bobrow's Algorithm & Oct-30 & $\checkmark$ \\
+\hline
+
+\textbf{II} & Visualize collision regions in the Phase-plane for dynamic obstacles & Oct-30 & $\checkmark$ \\
+\hline
+
+\textbf{III} & Reformulate trajectory retiming as search problem & Nov-14 & \\
+\hline
+
+\textbf{IV} & Compare and constrast on quality and effort to a simpler approach & Nov-28 & \\
+\hline
+\end{tabular}
+\\
+\\
+\\
+The problem focus is shifted to time-parametrize a given path, while accounting for dynamic obstacles. The approach will expand on the remaining option from Milestone~\ref{subsec:ammend}, by discretizing in $s$, $\dot{s}$ and $t$. A naive approach is to greedily pick the times to execute "waiting" maneuvers. Will also compare against the greedy approach to modifying the Bobrow algorithm solution.
+
+%------------------------------------------------
+
+%------------------------------------------------
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\bibliographystyle{unsrt}
+
+\bibliography{bibliography}
+
+\ifpfig
+\ffig{pics/dynamic_singularity_pose}{Manipulator's $\mathbb{C}$-space path alongside the configuration of the end-effector at which there is unclear path-acceleration}{DynSing}
+
+\clearpage
+
+\ffig{pics/box_constraint_mvc}{Maximum Velocity curve in the $s$-$\dot{s}$ plane, with the $\beta$ and $\alpha$ acceleration profiles from start and end configurations.}{BoxMVC}
+
+\ffig{pics/bobrow_path}{Demonstration of successful trajectory retiming curve constructed using elliptical torque contraints.}{elliptical}
+
+%\ffig{pics/box_constraints_at_switch}{Constraints on $\dot{s}$ and $\ddot{s}$ at the irregular switch point. The exaggerated scale of the $\ddot{s}$ means a practically unbounded range of path accelerations can be chosen at the point of maximum path velocity $\dot{s}_{max}$}{box_constraints}
+
+\ffigdouble{pics/representation3d1}{pics/representation3d2}{Two viewpoints of the retiming curve constructed in the $s$-$\dot{s}$ plane and then rendered in the $t$-dimension, which shows how it intersects with the region rendered inadmissible by collision checking}{rep3da}
+
+\ffigdouble{pics/representation3d3}{pics/representation3d4}{Representation of moving obstacle to the path of the end effector from the: (a) $s$-$t$ plane viewpoint where the dark-red region is the region of collision, and (b) $s$-$\dot{s}$ viewpoint where the green region ambiguously represents the collision region of the dynamic obstacle}{rep3db}
+
+%\ffigdoublevert{pics/planner/initial_exp1}{pics/planner/initial_exp2}{Successor reachable velocities and time interval generated for the start state, represented as the black line on the $s=1$ plane.}{iexp}
+
+%\ffigdoublevert{pics/planner/second_exp1}{pics/planner/second_exp2}{Possible retiming curves for the earliest and latest times for the \textbf{previous} state, represented as magenta and blue curves that start from the $s=0$ plane.}{sexpA}
+
+%\ffigdoublevert{pics/planner/second_exp4}{pics/planner/second_exp5}{Family of retiming curves that each start from a point on the $s=0$ plane decided by the preceding state.}{sexpB}
+\fi
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
