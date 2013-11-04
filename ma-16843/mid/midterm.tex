@@ -195,7 +195,7 @@ The observation that a switching point strategy for dynamic obstacles cannot be 
 
 The $\mathbb{C}$-space planner with trajectory retiming proposed is not probabilistically-complete due to the assumptions that are made about the interpolating path~\cite{pham2013velocity}. My claim that this could be redressed by implementing the VIP-framework using a graph-search based planner also does not hold. In generating a successor using only the kinematic $\mathbb{C}$-space, similar assumptions need to be made for getting the path over which time-scaling is performed. For this reason Milestone \textbf{III} in the table above is skipped. This means two sub-milestones in Milestone \textbf{IV} are not feasible.
 
-\subsection{SIPP Framework, VIP, and Ammendments}\label{subsec:ammend}
+\subsection{SIPP Framework and VIP}\label{subsec:ammend}
 
 In this milestone, I suggest integrating VIP with SIPP. However, outside of the shortcoming described in Milestone~\ref{subsec:vip}, the problem is not feasible since SIPP's assumptions are incompatible or not evidently reconcilable, as can be seen here:
 \begin{itemize}
@@ -222,13 +222,13 @@ Another hurdle to SIPP is computing the earliest time to reach a successor (whic
 \textbf{III} & Reformulate trajectory retiming as search problem & Nov-14 & \\
 \hline
 
-\textbf{IV} & Compare and constrast on quality and effort to a simpler approach & Nov-28 & \\
+\textbf{IV} & Compare and constrast on quality and effort to different approaches & Nov-28 & \\
 \hline
 \end{tabular}
 \\
 \\
 \\
-The problem focus is shifted to time-parametrize a given path, while accounting for dynamic obstacles. The approach will expand on the remaining option from Milestone~\ref{subsec:ammend}, by discretizing in $s$, $\dot{s}$ and $t$. A naive approach is to greedily pick the times to execute "waiting" maneuvers. Will also compare against the greedy approach to modifying the Bobrow algorithm solution.
+The problem focus is shifted to time-parametrize a given path, while accounting for dynamic obstacles. The approach will expand on the remaining option from Milestone~\ref{subsec:ammend}, by discretizing in $s$, $\dot{s}$ and $t$. Alternative methods will also be experimented with, such as a greedy approach, or other methods found in literature.
 
 %------------------------------------------------
 
