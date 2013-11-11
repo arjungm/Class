@@ -132,27 +132,31 @@ E\left[ \bar{X}_n \right] = \mu = p\\
 and,
 
 \begin{align*}
-\mathrm{Var}\left[ \bar{X}_n \right] = \sigma^2 &= \frac{1}{n^2} \sum_{i=1}^n\mathrm{X_i} \\
+\mathrm{Var}\left[ \bar{X}_n \right] = \sigma^2 &= \frac{1}{n^2} \sum_{i=1}^n\mathrm{Var}\left[X_i \right] \\
 &= \frac{np(1-p)}{n^2} \\
 &= \frac{p(1-p)}{n} \\
 \end{align*}
 
-and for our choice of $k$, we pick
+and for our choice of $k$, we pick such that
 
 \begin{align*}
 \bar{X}_n &\geq \sfrac{1}{2} \\
-&= k+\mu \\
-\implies k = \sfrac{1}{2}-p
+\bar{X}_n - \mu &= \sfrac{1}{2} - \mu \\
+\implies k &= \sfrac{1}{2}-\mu \\
 \end{align*}
 
-when $p < \sfrac{1}{2}$, then we can apply Chebyshev's inequality,
+Therefore only when $p < \sfrac{1}{2}$, then we can apply Chebyshev's inequality,
 
 \begin{align*}
-\pr{\left|\bar{X}_n - p\right| \geq \sfrac{1}{2}-p} &\leq \frac{(\frac{p(1-p)}{n})^2}{(\sfrac{1}{2}-p)^2}\\
+\pr{\left|\bar{X}_n - \mu \right| \geq \sfrac{1}{2}-\mu} &\leq \frac{(\frac{p(1-p)}{n})^2}{(\sfrac{1}{2}-\mu)^2}\\
 \pr{\left|\bar{X}_n - p\right| \geq \sfrac{1}{2}-p} &\leq \frac{p(1-p)}{n(\sfrac{1}{2}-p)^2} \\
 \end{align*}
 
 which holds for only for $p<\sfrac{1}{2}$.
+
+\subsubsection*{(c)}
+
+
 
 %------------------------------------------------
 %\bibliographystyle{unsrt}
