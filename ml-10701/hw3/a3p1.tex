@@ -21,7 +21,7 @@
 
 \documentclass[letterpaper,10pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
 \usepackage{geometry}
-\geometry{paperwidth=4in,margin=.1in,paperheight=20in}
+\geometry{paperwidth=4in,margin=.1in,paperheight=35in}
 \usepackage[protrusion=true,expansion=true]{microtype} % Better typography
 \usepackage{graphicx} % Required for including pictures
 \usepackage{caption}
@@ -84,7 +84,7 @@ headpunct={}
 %	TITLE
 %----------------------------------------------------------------------------------------
 
-\title{\textbf{Assignment 2}\\ % Title
+\title{\textbf{Assignment 3}\\ % Title
 Machine Learning 10-701} % Subtitle
 
 \author{\textsc{Arjun Menon} % Author
@@ -156,7 +156,65 @@ which holds for only for $p<\sfrac{1}{2}$.
 
 \subsubsection*{(c)}
 
+For Heoffding's inequality, 
 
+\begin{align*}
+\pr{\left|\bar{X}_n - \mu \right| \geq \epsilon} \leq 2e^{-2n\epsilon^2 /(b-a)^2}\\
+\end{align*}
+
+which for a biased coin, we use the result above that $\epsilon = \sfrac{1}{2} - p$ thus obtaining
+
+\begin{align*}
+\pr{\left|\bar{X}_n - \mu \right| \geq \epsilon} \leq 2e^{-2n(\sfrac{1}{2} - p)^2}\\
+\end{align*}
+
+\subsubsection*{(d)}
+
+Initially Markov is tightest, but then Chebyshev is tightest from the range of $n=~5$ to $n=20$, after which Hoeffding is the tightest bound.
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{\textwidth}
+\includegraphics[width=\textwidth]{figs/p1de}
+\caption{Probability bounds: Markov, Chebyshev, and Hoeffding}
+\label{fig:p1de}
+\end{subfigure}%
+
+\begin{subfigure}[b]{\textwidth}
+\includegraphics[width=\textwidth]{figs/p1f}
+\caption{Semilogspace probability bounds}
+\label{fig:p1f}
+\end{subfigure}
+
+\begin{subfigure}[b]{\textwidth}
+\includegraphics[width=\textwidth]{figs/p1g}
+\caption{Logspace probability bounds}
+\label{fig:p1g}
+\end{subfigure}
+
+\caption{}\label{fig:p1}
+\end{figure}
+
+\subsubsection*{(e)}
+
+See Figure~\ref{fig:p1de}
+\subsubsection*{(f)}
+See Figure~\ref{fig:p1f}
+\subsubsection*{(g)}
+See Figure~\ref{fig:p1g}
+\subsubsection*{(h)}
+In original space, only the Markov bound is linear, since it is a constant with respect to the number of samples.
+
+In semi-log space, the Markov and Hoeffding bounds are linear. Hoeffding is linear now because $n$ is in the exponent in the original bound. Therefore $n$ will vary with itself linearly.
+
+In log-log space, the Markov and Chebyshev bounds are linear. Chebyshev is linear because $\log n$ varies with
+
+\begin{align*}
+\log ( \pr{\left|\bar{X}_n - p\right| \geq \sfrac{1}{2}-p} ) &\leq \log \left( \frac{p(1-p)}{n(\sfrac{1}{2}-p)^2} \right) \\
+\log ( \pr{\left|\bar{X}_n - p\right| \geq \sfrac{1}{2}-p} ) &\leq -\log(n) + \log \left( \frac{p(1-p)}{(\sfrac{1}{2}-p)^2} \right) \\
+\end{align*}
+
+linearly.
 
 %------------------------------------------------
 %\bibliographystyle{unsrt}

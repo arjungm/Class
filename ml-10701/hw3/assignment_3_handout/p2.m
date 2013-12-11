@@ -23,5 +23,5 @@ dec=reshape(dec_val,N_bound,N_bound);
 [C h] = contour(x1, x2, dec,[-1 0 1],'LineWidth',2);
 
 colorize
-plot(model1.SVs(:,1),model1.SVs(:,2),'ko','MarkerSize',10);
+plot(model1.SVs(:,1),model1.SVs(:,2),'ks','MarkerSize',8);
 end

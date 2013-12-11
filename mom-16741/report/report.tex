@@ -1,0 +1,312 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper,12pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+\usepackage[margin=1.5in]{geometry}
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{ifthen}
+\usepackage{wrapfig} % Allows in-line images
+
+\usepackage{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Required for accented characters
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+\vspace{5pt} % Some vertical space between the title and author name
+
+{\large\@author} % Author name
+\vspace{0pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+
+\newcommand{\ffig}[3]{
+    \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{#1}
+    \caption{#2}
+    \label{fig:#3}
+    \end{figure}
+}
+
+\newcommand{\ffigdoublevert}[4]{
+    \begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[t!]{0.7\linewidth}
+    \includegraphics[width=\linewidth]{#1}
+    \caption{}
+    \label{fig:#4L}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b!]{0.7\linewidth}
+    \includegraphics[width=\linewidth]{#2}
+    \caption{}
+    \label{fig:#4R}
+    \end{subfigure}
+
+    \caption{#3}
+    \label{fig:#4}
+    \end{figure}
+}
+
+\newcommand{\ffigdouble}[4]{
+    \begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[t!]{0.48\linewidth}
+    \includegraphics[width=\linewidth]{#1}
+    \caption{}
+    \label{fig:#4L}
+    \end{subfigure}
+    \begin{subfigure}[b!]{0.48\linewidth}
+    \includegraphics[width=\linewidth]{#2}
+    \caption{}
+    \label{fig:#4R}
+    \end{subfigure}
+
+    \caption{#3}
+    \label{fig:#4}
+    \end{figure}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{Trajectory Retiming for Manipulation Planning}\\ % Title
+A Planning Approach} % Subtitle
+
+\author{\textsc{Arjun Menon} % Author
+\\{\textit{Carnegie Mellon University}}} % Institution
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT AND KEYWORDS
+%----------------------------------------------------------------------------------------
+
+\renewcommand{\abstractname}{Summary} % Uncomment to change the name of the abstract to something else
+
+\begin{abstract}
+Motion planning for dynamic obstacles is a challenging problem for existing approachs that deal with the
+full dimensional framing of the problem. The added dimensionality comes from time as a dimension, and if
+we consider the dynamics of the robot, then we add the time derivatives of configuration space dimensions
+to the planning problem. In this project, we solve the smaller problem of generating feasible timings of a
+fixed manipulator or robot path in configuration space, while respecting dynamic constraints and avoiding
+collisions with dynamic obstacles. Using the phase space representation of the untimed path, and a novel
+object representation we formulate the retiming problem as a graph search in 3d, which we use Weighted A*
+to solve for the collision-free, dynamically-feasible time-parametrization of a path with bounds on 
+suboptimality of the solution. We present qualitative results that demonstrate the effectiveness and 
+generality of the approach to a motion planning problem.
+\end{abstract}
+
+\hspace*{3,6mm}\textit{Keywords:} lorem , ipsum , dolor , sit amet , lectus % Keywords
+
+\vspace{10pt} % Some vertical space between the abstract and first section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+
+Motion planning in unchanging environments has a rich collection of algorithms to generate feasible or optimal paths with respect to some cost function. For obstacles that are in motion, time must be included as a dimension in the algorithm for the purposes of determining $\mathbb{C}_{free}$. The problem becomes harder when there are dynamic constraints on the motions of the robot, such as the maximum torques exerted by manipulator actuators. This culminates in planning dimensionality that is quickly intractable for grid-based planning. Sampling based planners outperform in this arena, however have no guarantees on path optimality. Additionally traditional improvement techniques for sampling based planners such as short-cutting are impossible to implement in the kinodynamic configuration space, since it requires solving the two point boundary value problem.
+
+This project aims to pre-empt the dimensionality problem for grid-based planning by rescoping it to design a \emph{trajectory retiming} strategy for kinodynamic robot constraints and moving obstacles. A graph-search based planner is adapted to solve this problem, using inspiration from Bobrow's trajectory retiming algorithm~\cite{bobrow1985time}, and a novel moving object representation. Constructing a graph in the phase-space augmented with time, a solution trajectory timing is obtained that is within the feasible controls of the robot, avoid collision with dynamic obstacles, and has theoretical bounds on the suboptimality of the solution (by choice of the grasph search algorithm).
+
+\section{Background}\label{sec:framework}
+
+\subsection{Bobrow's Algorithm}\label{subsec:bobrow}
+
+Bobrow's algorithm is a strategy for creating trajectory retimings for manipulators using the observation that the feasible controls are constrained to those that keep the motion of the manipulator end-effector along the path. If the path the end-effector follows can be described by a single parameter $s$, 
+
+\begin{equation}
+\Theta = \left[ \begin{array}{c} \theta_1 \\ \theta_2 \\ \vdots \\ \theta_n \end{array} \right] = \Theta(s) \\
+\end{equation}
+
+then by taken the derivatives, we are able to get expressions for the velocity of the manipulator joints, $\dot{\Theta}$, and the acceleration of the manipulator joints,$\ddot{\Theta}$. This combined with the manipulator dynamics model,
+
+\begin{equation}
+M( \Theta ) \ddot{\Theta} + C( \Theta, \dot{\Theta} ) + G(\Theta) = \tau \\
+\end{equation}
+
+where $M$, $C$ and $G$ are state-dependant matrices for mass, coriolis and gravity terms, enables us to formulate our constraints on actuator torques,
+
+\begin{equation}
+\tau_{min} \leq \tau \leq \tau_{max} \\
+\end{equation}
+
+allows us to determine the constraints on $\ddot{s}$ dependant on $s$ and $\dot{s}$. Here, $\ddot{s}$ is the analogue of path pseudo-acceleration, $\dot{s}$ is the analgoue of path pseudo-velocity, and $s$ is the analogue of path psuedo-position. This enables us to define a coupled first order dynamical system $Y = (s, \dot{s})$ and by integrating with $Y' = (\dot{s}, \ddot{s})$ we are able to get velocity profile curves, where the pseudo-velocity is a function of the position along the path.
+
+By bang-bang control theory, the time-optimal velocity profile in this space would be the one that always moves at maximum or minimum possible path pseudo-acceleration by saturating at least one of the actuator torques.
+
+Bobrow's algorithm uses this observation and greedily constructs the velocity profile curve in $s-\dot{s}$ space by alternating between maximum and minimum possible path pseudo-acceleration, with minimal number of "switches" between the two integration profiles.
+
+\subsection{Dynamic Object Representation}\label{subsec:dynobj}
+
+Bobrow's algorithm however is unable to deal with the presence of dynamic obstacles that intersect the path of the manipulator. This short-coming is addressed in our planner by augmenting the $s-\dot{s}$ space with the time dimension. This allows us to have a sensible, compact representation for dynamic obstacles, which we now elaborate on.
+
+Dynamic obstacles can be determined to be arbitrarily shaped regions in $s-t$ plane. The observation that the pseudo-velocity at a configuration $s$ along the path $\Theta(s)$ has no effect on the collision check of the configuration means that dynamic obstacles are swept volumes of the $s-t$ shape in the combined $s-\dot{s}-t$ space.
+
+\ffig{pics/representation3d1}{Dynamic obstacle (green swept volume) representation in the augment phase space, where the upward axis is time. The red surface represents a limiting curve in the $s-\dot{s}$ space (swept in time) under which the phase-space trajectory must lie. The blue curve represents the corresponding time-optimal time-parametrization of the path of the manipulator}{dynobjrep}
+
+Now that we have a representation for dynamic obstacles, and using the intuition of how to construct time-parametrizations in phase space, we can now formulate the trajectory retiming problem as a planning problem in this space.
+
+\section{Algorithm}\label{subsec:alg}
+
+We formulate the problem as graph-search and as with any graph search it can be split into four parts: graph construction, cost function, heuristic function and the search algorithm itself.
+
+\subsection{Graph construction}\label{subsec:graph}
+
+A graph $G = (V, E)$ consists of vertices $V$ and edges $E$. In this context, our vertices are coordinates of the state vector $(s, \dot{s}, t)$. An edge exists between them if you can connect them using integration profiles that are either maximizing OR minimizing path pseudo-acceleration.
+
+Since it is impossible to generate the set of all vertices and edges, it suffices to generate vertices on-the-fly by applying our motion primitives of maximum pseudo-acceleration or minimum pseudo-acceleration. Additionally however since the motion primitives require we advance along the path, we need a way to allow the robot to control around the obstacles. So we include motion primitives that allow the robot to wait, if and only if $\dot{s} = 0$ for the state. We initialize the start state to $(s,\dot{s},t)=(0, 0, 0)$ and our goal state is partially defined as $(s,\dot{s})=(1, 0)$ which is at the end of the path and at zero path pseudo-velocity.
+
+\subsection{Cost function}\label{subsec:cost}
+
+The cost functional for the solution retiming is defined to be the time taken. This means the path that comes from the graph-search algorithm under an admissible heuristic is optimal with respect to the cost functional.
+
+\subsection{Heuristic function}\label{subsec:heur}
+
+The purpose of the heuristic is to guide an A* like search algorithm by guiding it to expand states in promising directions. Heuristic-based search algorithms require that the heuristic function is admissible (underestimating the cost to goal) and consistent. A typical method for formulating a heuristic is to use the results from a simplified problem, such as from a lower-dimensional version of a similar search problem.
+
+In our problem, our heuristic is to construct the optimal retiming from the current state $(s, \dot{s})$ and the time taken for this retiming is the heuristic estimate. It is constructed exactly as how Bobrow's algorithm would construct it, but starting from the state's coordinate.
+
+\subsection{Search}\label{subsec:search}
+
+We use the weighted variant of A* to search a graph G for the solution. Weight A* operates exactly as A* does except the vertices on the open list are sorted by the priority function:
+
+\begin{equation}
+f( v ) = g( v ) + \epsilon * h( v )
+\end{equation}
+
+where $g(v)$ is the path cost incurred so far, in reaching the vertex $v$ and $h(v)$ is the heuristic value for the vertex, and $\epsilon$ is the weighting. Weighted A* no longer returns the optimal path, but it returns a path whose cost is no more than $\epsilon$ times the cost of the true optimal path. In practice, it is much faster and is a greedier, suboptimal cousin of A*. Weight A* is also complete with respect to the given graph.
+
+\section{Experimental Results}
+
+All experiments were done in simulation and with a planner epsilon greater than 1. We can only report qualitiative results, but there is 100\% success rate in all planning scenarios, and valid through inspection. We tested for environments with translating and periodic obstacles, and with robots that are a holonomic point robot and a 2 link manipulator.
+
+The moving obstacles are perfectly known to the planner and as a preprocessing step we sweep the obstacle along its trajectory, inspect the configurations along the path which it collides with the robot, and approximate the set of invalid collision regions as a box in $s$ and $t$.
+
+Please see the attached animated images in order to see the result paths that are generated.
+
+\subsection{Holonomic Point Robot}
+
+\ffigdouble{pics/twist1}{pics/twist2}{Holonomic point robot on twisting path with periodic obstacles}{hovertwist}
+
+In Figure~\ref{fig:hovertran} and ~\ref{fig:hovertwist} the point robot, indicated in red, is moving along the path prescribed by the black curve. The obstacles are rectangles that either rotate or translate along the path of the robot.
+
+The summary of planning times, solution cost and number of state expansions is summarized in the following table.
+
+
+\begin{table}[hc]
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\hline
+Planning Scene & Plan. Time(s) & Expans. & Sol. Cost & Epsilon\\
+\hline
+Sine wave & 2.41 & 41 & 8.89 & 2\\
+Sharp turn & 3.29 & 72 & 14.16 & 5 \\
+Twisting path & 3.57 & 46 & 21.37 & 5\\
+\hline
+\end{tabular}
+\caption{\small{Summary of performance on holonomic point robot test scenes.}}
+\label{tab:performance_results}
+\end{center}
+\end{table}
+
+\ffigdoublevert{pics/trans1}{pics/trans2}{Holonomic point robot on sine-wave path with translating obstacles}{hovertran}
+
+\subsection{Two-link Manipulator}
+
+In Figure~\ref{fig:raisearm} and~\ref{fig:swingarm} the 2DOF manipulator avoids translating obstacles (boxes) in the Z direction while moving in the plane from its start o end configuration.
+
+Please see the appendix for figures involving the corresponding phase-space plans. The summary of planning times, solution cost and number of state expansions is provided in the following table.
+
+\begin{table}[hc]
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\hline
+Planning Scene & Plan. Time(s) & Expans. & Sol. Cost & Epsilon\\
+\hline
+Raise arm & 2.12 & 15 & 1.089 & 10\\
+Swing arm & 0.43 & 16 & 1.116 & 10 \\
+\hline
+\end{tabular}
+\caption{\small{Summary of performance on two link manipulator test scenes.}}
+\label{tab:performance_results}
+\end{center}
+\end{table}
+
+\ffigdouble{pics/raise1}{pics/raise2}{Two-link manipulator in the X-Y plane raising its arm with translating obstacles in Z}{raisearm}
+\ffigdouble{pics/swing1}{pics/swing2}{Two-link manipulator in the X-Y plane swinging its arm with translating obstacles in Z}{swingarm}
+
+\section{Discussion}
+
+The planning framework presented here has the property that no matter the dimension of your kinodynamic configuration space, the plans are 3 dimensional. This reduced dimensionality allows the search based planner to avoid the curse of dimensionality normally associated with kinodynamic configuration spaces.
+
+Possible applications of this approach are in multirobot planning, where the paths of many robots are serially retimed using the previous retiming to create a new dynamic obstacle for the succeeding robot in the retiming-queue. Whether this is more efficient that planning in the kinodynamic configuration space of all the combined robots needs to be seen. However that approach does not have any good guarantees on completeness with respect to multiple robots.
+
+One can also imagine the scenario with autonmous cars, which are moving amidst other dynamic obstacles, that possess a library of maneuvers (e.g. traversing an intersection can only occur along one path without chaos) but need to account for the feasible controls and other vehicles.
+
+\section{Conclusions}
+
+A planner was developed to deal with dynamic obstacles for trajectory retiming using graph search methods. The resulting test scenarios were all planned within a time frame of the same order as the execution times of the plans (i.e. the solution cost). This is promising as potential speed-up can be capitalized on, such as faster numerical integration, or optimized C++ implementations (since this was all done in MATLAB).
+
+Future work is to integrate this into a larger planning framework for planning kinodynamic motions, in order to ensure completeness in the full posed problem of planning a path in the kinodynamic configuration space. Also more experiments need to be run on the failure cases of the planner.
+
+\section{Acknowledgements}
+
+I'd like to thank the reader for reading and the opportunity to do such a whimsical class project.
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\bibliographystyle{unsrt}
+
+\bibliography{bibliography}
+
+\newpage
+\appendix
+\section{Trajectory retiming solutions}
+
+\ffigdoublevert{pics/plans/trans1}{pics/plans/trans2}{$s-\dot{s}$ and $s-t$ time parametrizations for sine-wave path of holonomic point robot}{a1}
+\ffigdoublevert{pics/plans/twist1}{pics/plans/twist2}{$s-\dot{s}$ and $s-t$ time parametrizations for twisting path of holonomic point robot}{a2}
+\ffigdoublevert{pics/plans/raise1}{pics/plans/raise2}{$s-\dot{s}$ and $s-t$ time parametrizations for rising path for planar two-link manipulator}{a3}
+\ffigdoublevert{pics/plans/swing1}{pics/plans/swing2}{$s-\dot{s}$ and $s-t$ time parametrizations for swinging path for planar two-link manipulator}{a4}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
