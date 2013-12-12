@@ -100,7 +100,7 @@
 %	TITLE
 %----------------------------------------------------------------------------------------
 
-\title{\textbf{Trajectory Retiming for Manipulation Planning}\\ % Title
+\title{\textbf{Trajectory Retiming for Moving Obstacles}\\ % Title
 A Planning Approach} % Subtitle
 
 \author{\textsc{Arjun Menon} % Author
@@ -131,7 +131,7 @@ suboptimality of the solution. We present qualitative results that demonstrate t
 generality of the approach to a motion planning problem.
 \end{abstract}
 
-\hspace*{3,6mm}\textit{Keywords:} lorem , ipsum , dolor , sit amet , lectus % Keywords
+\hspace*{3,6mm}\textit{Keywords:} motion planning, kinodynamic, manipulator control, moving obstacles % Keywords
 
 \vspace{10pt} % Some vertical space between the abstract and first section
 
@@ -143,31 +143,38 @@ generality of the approach to a motion planning problem.
 
 Motion planning in unchanging environments has a rich collection of algorithms to generate feasible or optimal paths with respect to some cost function. For obstacles that are in motion, time must be included as a dimension in the algorithm for the purposes of determining $\mathbb{C}_{free}$. The problem becomes harder when there are dynamic constraints on the motions of the robot, such as the maximum torques exerted by manipulator actuators. This culminates in planning dimensionality that is quickly intractable for grid-based planning. Sampling based planners outperform in this arena, however have no guarantees on path optimality. Additionally traditional improvement techniques for sampling based planners such as short-cutting are impossible to implement in the kinodynamic configuration space, since it requires solving the two point boundary value problem.
 
-This project aims to pre-empt the dimensionality problem for grid-based planning by rescoping it to design a \emph{trajectory retiming} strategy for kinodynamic robot constraints and moving obstacles. A graph-search based planner is adapted to solve this problem, using inspiration from Bobrow's trajectory retiming algorithm~\cite{bobrow1985time}, and a novel moving object representation. Constructing a graph in the phase-space augmented with time, a solution trajectory timing is obtained that is within the feasible controls of the robot, avoid collision with dynamic obstacles, and has theoretical bounds on the suboptimality of the solution (by choice of the grasph search algorithm).
+This project aims to pre-empt the dimensionality problem for grid-based planning by rescoping it to design a \emph{trajectory retiming} strategy for kinodynamic robot constraints and moving obstacles. A graph-search based planner is adapted to solve this problem, using inspiration from Bobrow's trajectory retiming algorithm~\cite{bobrow1985time,shin1985minimum,kunz2012time}, and a novel moving object representation. Constructing a graph in the phase-space augmented with time, a solution trajectory timing is obtained that is within the feasible controls of the robot, avoid collision with dynamic obstacles, and has theoretical bounds on the suboptimality of the solution (by choice of the grasph search algorithm).
 
 \section{Background}\label{sec:framework}
 
 \subsection{Bobrow's Algorithm}\label{subsec:bobrow}
 
-Bobrow's algorithm is a strategy for creating trajectory retimings for manipulators using the observation that the feasible controls are constrained to those that keep the motion of the manipulator end-effector along the path. If the path the end-effector follows can be described by a single parameter $s$, 
+Bobrow's algorithm is a strategy for creating trajectory retimings for manipulators using the observation that the feasible controls are constrained to those that keep the motion of the manipulator end-effector along the path. If the path the end-effector follows can be described by a single parameter $s$, then by taking the derivative with respect to time, we are able to get expressions for the velocity of the manipulator joints, $\dot{\theta}$, and the acceleration of the manipulator joints, $\ddot{\theta}$, in terms of $s$, $\dot{s}$, and $\ddot{s}$. 
 
 \begin{equation}
-\Theta = \left[ \begin{array}{c} \theta_1 \\ \theta_2 \\ \vdots \\ \theta_n \end{array} \right] = \Theta(s) \\
+\theta = f(s)\\
+\end{equation}
+\begin{equation}
+\dot{\theta} = f^\prime(s) \dot{s}\\
+\end{equation}
+\begin{equation}
+\ddot{\theta} = f^{\prime\prime}(s) \dot{s}^2 + f^\prime(s) \ddot{s}\\
 \end{equation}
 
-then by taken the derivatives, we are able to get expressions for the velocity of the manipulator joints, $\dot{\Theta}$, and the acceleration of the manipulator joints,$\ddot{\Theta}$. This combined with the manipulator dynamics model,
+
+Here, $\ddot{s}$ is the analogue of path pseudo-acceleration, $\dot{s}$ is the analgoue of path pseudo-velocity, and $s$ is the analogue of path psuedo-position. This combined with the manipulator dynamics model for a $n$ degree of freedom manipulator,
 
 \begin{equation}
-M( \Theta ) \ddot{\Theta} + C( \Theta, \dot{\Theta} ) + G(\Theta) = \tau \\
+M({\theta}) \ddot{{\theta}} + \dot{{\theta}}^{T} C({\theta}) \dot{{\theta}} + G({\theta}) = \tau
 \end{equation}
 
-where $M$, $C$ and $G$ are state-dependant matrices for mass, coriolis and gravity terms, enables us to formulate our constraints on actuator torques,
+where $\theta$ is the $n \times 1$ vector of joint positions, $\dot{\theta}$ is the vector of joint velocities, $\ddot{\theta}$ is the vector of joint accelerations, $M$ is the $n \times n$ inertia matrix of the manipulator, $C$ is the $n \times n \times n$ Coriolis tensor, and $G$ is the $n \times 1$ vector of gravity forces, and $\tau$ is the $n \times 1$ vector of joint torques. The joint torques for a manipulator are constrained are constrained as follows,
 
 \begin{equation}
 \tau_{min} \leq \tau \leq \tau_{max} \\
 \end{equation}
 
-allows us to determine the constraints on $\ddot{s}$ dependant on $s$ and $\dot{s}$. Here, $\ddot{s}$ is the analogue of path pseudo-acceleration, $\dot{s}$ is the analgoue of path pseudo-velocity, and $s$ is the analogue of path psuedo-position. This enables us to define a coupled first order dynamical system $Y = (s, \dot{s})$ and by integrating with $Y' = (\dot{s}, \ddot{s})$ we are able to get velocity profile curves, where the pseudo-velocity is a function of the position along the path.
+allows us to determine the limits on $\ddot{s}$ dependant on $s$ and $\dot{s}$. This enables us to define a coupled first order dynamical system $Y = (s, \dot{s})$ and by integrating with $Y' = (\dot{s}, \ddot{s})$ we are able to get velocity profile curves, where the pseudo-velocity is a function of the position along the path.
 
 By bang-bang control theory, the time-optimal velocity profile in this space would be the one that always moves at maximum or minimum possible path pseudo-acceleration by saturating at least one of the actuator torques.
 
@@ -205,13 +212,13 @@ In our problem, our heuristic is to construct the optimal retiming from the curr
 
 \subsection{Search}\label{subsec:search}
 
-We use the weighted variant of A* to search a graph G for the solution. Weight A* operates exactly as A* does except the vertices on the open list are sorted by the priority function:
+We use the weighted variant of A* to search the graph G for the solution. Weighted A* operates exactly as A* does, except that vertices on the open list are sorted by the priority function:
 
 \begin{equation}
 f( v ) = g( v ) + \epsilon * h( v )
 \end{equation}
 
-where $g(v)$ is the path cost incurred so far, in reaching the vertex $v$ and $h(v)$ is the heuristic value for the vertex, and $\epsilon$ is the weighting. Weighted A* no longer returns the optimal path, but it returns a path whose cost is no more than $\epsilon$ times the cost of the true optimal path. In practice, it is much faster and is a greedier, suboptimal cousin of A*. Weight A* is also complete with respect to the given graph.
+where $g(v)$ is the path cost incurred so far reaching the vertex $v$, $h(v)$ is the heuristic value for the vertex, and $\epsilon$ is the weight. Weighted A* no longer returns the optimal path, but it returns a path whose cost is no more than $\epsilon$ times the cost of the true optimal path~\cite{Pohl-heursearch}. While normal Weighted A* allows a vertex to be expanded more than once (whenever a shorter path to the state is found), the same guarantees can be provided even if we allow each vertex to be expanded only once ~\cite{LikGorThr-ara}. In practice, doing Weighted A* is much faster because it expands fewer states, which saves on time spent doing numerical integration.
 
 \section{Experimental Results}
 
@@ -294,9 +301,9 @@ I'd like to thank the reader for reading and the opportunity to do such a whimsi
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
-\bibliographystyle{unsrt}
 
-\bibliography{bibliography}
+\bibliography{bibliography,max}
+\bibliographystyle{unsrt}
 
 \newpage
 \appendix
