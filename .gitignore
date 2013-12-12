@@ -25,3 +25,8 @@
 *.pdf
 *.toc
 *.m~~
+
+#archives
+.tar
+.zip
+.tar.gz
